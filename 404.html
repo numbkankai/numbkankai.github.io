@@ -1021,127 +1021,31 @@ document.addEventListener('DOMContentLoaded', function() {
 </mdui-navigation-drawer>
     <main class="main">
         <div class="page-transition-container">
-            <div class="banner-wrapper">
-    <link rel="stylesheet" href="/fonts/banner/banner.css">
-
-<div class="banner-container">
-    <mdui-card class="banner-title">
-        <div class="banner-title-text1">Materialis</div>
-        <div class="banner-title-text2">A Material Design 3 theme for Hexo.</div>
-
-        
-    </mdui-card>
-
-    <mdui-card class="banner-image">
-        <div style="margin: 16px; text-align: center;">
-            <p class="banner-hitokoto" variant="filled">
-                <mdui-icon slot="icon">format_quote</mdui-icon>
-                <a href="#" id="hitokoto_text" style="color: var(--mdui-color-on-surface); text-decoration: none; font-style: italic;">
-                    <span id="hitokoto_inner">获取中...</span><span id="hitokoto_cursor">|</span>
-                </a>
-            </p>
-        </div>
-
-        <script>
-        (function(){
-            function typeText(el, text, speed, cursorEl) {
-                if (!el) return;
-                el.textContent = '';
-                let i = 0;
-                if (cursorEl) cursorEl.style.opacity = '1';
-                function step(){
-                    if (i < text.length) {
-                        el.textContent += text.charAt(i);
-                        i++;
-                        setTimeout(step, speed);
-                    } else {
-                        if (cursorEl) cursorEl.style.opacity = '0';
-                    }
-                }
-                step();
-            }
-
-            function fetchHitokoto(){
-                fetch('https://v1.hitokoto.cn')
-                    .then(function(r){ return r.json(); })
-                    .then(function(data){
-                        var inner = document.getElementById('hitokoto_inner');
-                        var cursor = document.getElementById('hitokoto_cursor');
-                        var link = document.getElementById('hitokoto_text');
-                        if (!inner || !link) return;
-                        if (data && data.hitokoto) {
-                            var text = data.hitokoto + (data.from ? ' — ' + data.from : '');
-                            if (data.uuid) link.href = 'https://hitokoto.cn/?uuid=' + data.uuid;
-                            typeText(inner, text, 40, cursor);
-                        }
-                    })
-                    .catch(function(){ /* ignore errors */ });
-            }
-
-            // 添加简单的光标闪烁样式
-            var _s = document.createElement('style');
-            _s.textContent = '#hitokoto_cursor{display:inline-block;margin-left:6px;opacity:1;transition:opacity .2s}@keyframes _hk{0%{opacity:1}50%{opacity:0}100%{opacity:1}} #hitokoto_cursor{animation:_hk 1s steps(1) infinite}';
-            document.head.appendChild(_s);
-
-            if (document.readyState === 'complete' || document.readyState === 'interactive') {
-                fetchHitokoto();
-            } else {
-                document.addEventListener('DOMContentLoaded', fetchHitokoto);
-            }
-        })();
-        </script>
-    </mdui-card>
-</div>
-</div>
-<mdui-layout-main>
-    <div class="articles-container">
-        
-        
-        
-            
-                <mdui-card 
-    class="article-card" 
-    variant="filled"
-    onclick="location.href='/2026/04/22/hello-world/'">
+            <div style="min-height: 80vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; padding: 40px;">
     
-    <div class="article-content">
-        <!-- 封面图片 -->
-        
-        
-        <!-- 内容区域 -->
-        <div class="article-main">
-            <mdui-typography class="article-title">
-                Hello World
-            </mdui-typography>
-
-            <!-- 有封面时摘要限制20字 -->
-            
-                <span>Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
-Qu...</span>
-            
-            
-            <div class="article-meta">
-                <mdui-typography variant="body2" class="article-date">
-                    <mdui-icon name="calendar_today" style="font-size: 1.1rem;"></mdui-icon>
-                    2026-04-22
-                </mdui-typography>
-                
-                <div class="article-tags">
-                    
-                </div>
-            </div>
+    <mdui-card class="mdui-primary" style="width: 100%; max-width: 400px; padding: 40px 32px;">
+        <div style="text-align: center;">
+            <mdui-typography variant="h2" style="margin-bottom: 16px;">404</mdui-typography>
+            <br>
+            <mdui-typography variant="h6" style="opacity: 0.8;">Page not found</mdui-typography>
         </div>
-        
-        <!-- 右侧：阅读更多 -->
-        <mdui-button class="article-side" variant="tonal">
-            <mdui-icon name="arrow_forward"></mdui-icon>
-        </mdui-button>
-    </div>
-</mdui-card>
+    </mdui-card>
+
+    <mdui-card class="mdui-primary" style="width: 100%; max-width: 400px; padding: 32px;">
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+            <mdui-button variant="filled" href="/" full-width>
+                <mdui-icon slot="icon">home</mdui-icon>
+                Return to homepage
+            </mdui-button>
             
-        
-    </div>
-</mdui-layout-main>
+            <mdui-button variant="outlined" onclick="history.back()" full-width>
+                <mdui-icon slot="icon">arrow_back</mdui-icon>
+                Go back
+            </mdui-button>
+        </div>
+    </mdui-card>
+
+</div>
         </div>
     </main>
 

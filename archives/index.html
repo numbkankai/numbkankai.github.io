@@ -1,187 +1,1433 @@
 <!DOCTYPE html>
-<html>
+<html lang="en"">
 <head>
-  <meta charset="utf-8">
-  
-  
-  <title>Archives | Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/archives/index.html">
-<meta property="og:site_name" content="Hexo">
-<meta property="og:locale" content="en_US">
-<meta property="article:author" content="John Doe">
-<meta name="twitter:card" content="summary">
-  
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/mdui@2/mdui.css">
+    <script src="https://unpkg.com/mdui@2/mdui.global.js"></script>
+    <link rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css">
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js"> </script>
+
+    
+        <link rel="stylesheet" href="/fonts/lxwk/lxwk.css">
+    
+
+    
 <link rel="stylesheet" href="/css/style.css">
 
-  
     
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+<link rel="stylesheet" href="/css/color.css">
 
+    
+<link rel="stylesheet" href="/css/widgets/page-transition.css">
+
+ 
+    
+        <mdui-dialog id="interceptDialog" class="interceptor-dialog" close-on-overlay-click>
+  <div class="mdui-dialog-title">即将离开本站</div>
+  <div class="mdui-dialog-content">
+    <div style="text-align: center; margin-bottom: 20px;">
+      <mdui-icon name="open_in_new" style="font-size: 48px; color: var(--mdui-color-primary);"></mdui-icon>
+    </div>
+    <p>您即将访问外部网站：</p>
+    <div class="link-info">
+      <strong id="interceptLinkText">链接文本</strong>
+      <br>
+      <small style="color: var(--mdui-color-on-surface-variant);" id="interceptDomain">域名</small>
+    </div>
+    <div class="mdui-typo-caption" style="margin-top: 16px; color: var(--mdui-color-on-surface-variant);">
+      <mdui-icon name="info" size="small"></mdui-icon>
+      请注意：外部网站的内容和安全性不在本站控制范围内
+    </div>
+  </div>
+  <div class="mdui-dialog-actions">
+    <mdui-button id="cancelBtn">取消</mdui-button>
+    <mdui-button variant="filled" id="continueBtn">继续访问</mdui-button>
+  </div>
+</mdui-dialog>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // 获取对话框元素
+  const interceptDialog = document.querySelector('#interceptDialog');
+  const continueBtn = document.querySelector('#continueBtn');
+  const cancelBtn = document.querySelector('#cancelBtn');
   
-  
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+  // 存储当前点击的链接
+  let currentLink = null;
+
+  // 图片文件后缀列表
+  const imageExtensions = [
+    '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', 
+    '.svg', '.ico', '.tiff', '.tif', '.avif', '.heic'
+  ];
+
+  // 拦截所有外部链接的点击事件
+  document.addEventListener('click', function(e) {
+    let target = e.target;
+    
+    // 向上查找链接元素
+    while (target && target.tagName !== 'A') {
+      target = target.parentElement;
+    }
+    
+    if (target && target.tagName === 'A') {
+      const href = target.getAttribute('href');
+      
+      // 只拦截外部链接，但不拦截图片链接
+      if (href && isExternalLink(href) && !isImageLink(href)) {
+        e.preventDefault();
+        currentLink = href;
+        showInterceptionDialog(href, target.textContent || target.title || '未知网站');
+      }
+    }
+  });
+
+  // 判断是否为外部链接
+  function isExternalLink(href) {
+    return (
+      href.startsWith('http://') ||
+      href.startsWith('https://') ||
+      href.startsWith('//') ||
+      href.startsWith('mailto:') ||
+      href.startsWith('tel:')
+    );
+  }
+
+  // 判断是否为图片链接
+  function isImageLink(href) {
+    const lowerHref = href.toLowerCase();
+    return imageExtensions.some(ext => lowerHref.endsWith(ext));
+  }
+
+  // 显示拦截对话框
+  function showInterceptionDialog(url, linkText) {
+    const domain = new URL(url, window.location.origin).hostname;
+    
+    // 更新对话框内容
+    document.getElementById('interceptLinkText').textContent = linkText;
+    document.getElementById('interceptDomain').textContent = domain;
+    
+    // 打开对话框
+    interceptDialog.open = true;
+  }
+
+  // 继续访问按钮点击事件
+  continueBtn.addEventListener('click', function() {
+    if (currentLink) {
+      window.open(currentLink, '_blank', 'noopener,noreferrer');
+      interceptDialog.open = false;
+      currentLink = null;
+    }
+  });
+
+  // 取消按钮点击事件
+  cancelBtn.addEventListener('click', function() {
+    interceptDialog.open = false;
+    currentLink = null;
+  });
+
+  interceptDialog.addEventListener('close', function() {
+    currentLink = null;
+  });
+});
+</script>
+
+<style>
+/* 对话框内容样式 */
+.interceptor-dialog {
+  background-color: rgba(var(--mdui-color-surface), 0.95) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(var(--mdui-color-outline), 0.1) !important;
+}
+
+.interceptor-dialog .mdui-dialog-title {
+  font-weight: 600;
+  text-align: center;
+  padding: 24px 24px 0;
+  color: var(--mdui-color-on-surface);
+}
+
+.interceptor-dialog .mdui-dialog-content {
+  padding: 20px 24px;
+  color: var(--mdui-color-on-surface-variant);
+}
+
+.interceptor-dialog .link-info {
+  background: rgba(var(--mdui-color-primary), 0.08);
+  padding: 16px;
+  border-radius: 8px;
+  margin: 16px 0;
+  text-align: center;
+  border: 1px solid rgba(var(--mdui-color-primary), 0.2);
+}
+
+.interceptor-dialog .mdui-dialog-actions {
+  padding: 8px 24px 24px;
+  justify-content: flex-end;
+  gap: 8px;
+}
+</style>        
+    
 
 <meta name="generator" content="Hexo 8.1.1"></head>
-
 <body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
-      
-    </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
-        
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
-      </div>
-    </div>
-  </div>
-</header>
+    <mdui-top-app-bar variant="center-aligned" scroll-behavior="elevate" class="top-app-bar">
+    <mdui-button-icon class="appbar-menu-button">
+        <mdui-icon name="menu"></mdui-icon>
+    </mdui-button-icon>
+    <mdui-top-app-bar-title onclick="window.location.href='/'" style="cursor: pointer;">
+        Hexo
+    </mdui-top-app-bar-title>
+        <mdui-dropdown>
+            <div slot="trigger">
+                <mdui-tooltip>
+                    <mdui-button-icon>
+                        <mdui-icon name="auto_mode" class="appbar-display-mode-icon"></mdui-icon>
+                    </mdui-button-icon>
+                </mdui-tooltip>
+            </div>
+            <mdui-menu selects="single" value="auto" class="appbar-display-mode">
+                <mdui-menu-item value="light">Light mode</mdui-menu-item>
+                <mdui-menu-item value="dark">Dark mode</mdui-menu-item>
+                <mdui-divider></mdui-divider>
+                <mdui-menu-item value="auto">Follow system</mdui-menu-item>
+            </mdui-menu>
+        </mdui-dropdown>
 
-      <div class="outer">
-        <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2026" class="archive-year">2026</a>
+        <!-- 搜索按钮 -->
+<mdui-button-icon id="search-toggle">
+    <mdui-icon name="search"></mdui-icon>
+</mdui-button-icon>
+
+<!-- 搜索弹窗 -->
+<mdui-dialog id="search-dialog" close-on-esc close-on-overlay-click class="search-dialog">
+    <div class="search-header">
+        <mdui-text-field class="search-input" placeholder="搜索文章、标签、分类..." id="search-input">
+            <mdui-icon name="search" slot="icon"></mdui-icon>
+        </mdui-text-field>
+        <mdui-button-icon class="close-btn" id="search-close">
+            <mdui-icon name="close"></mdui-icon>
+        </mdui-button-icon>
+    </div>
+
+    <div class="search-content">
+        <div id="search-results" class="search-results">
+            <div class="search-placeholder">
+                <mdui-icon name="search"></mdui-icon>
+                <div>输入关键词开始搜索</div>
+            </div>
         </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2026/04/22/hello-world/" class="archive-article-date">
-  <time class="dt-published" datetime="2026-04-22T15:39:55.319Z" itemprop="datePublished">Apr 22</time>
-</a>
-      
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2026/04/22/hello-world/">Hello World</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-
-  
-    
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/04/">April 2026</a></li></ul>
     </div>
-  </div>
 
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2026/04/22/hello-world/">Hello World</a>
-          </li>
-        
-      </ul>
+    <div class="search-footer">
+        <span class="result-count" id="result-count"></span>
+        <mdui-button id="search-close-btn">关闭</mdui-button>
     </div>
-  </div>
+</mdui-dialog>
 
-  
-</aside>
+<style>
+.search-dialog::part(overlay) {
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(10px) saturate(180%); /* Safari 支持 */
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.search-dialog {
+    --mdui-dialog-width: 600px;
+    --mdui-dialog-height: 70vh;
+}
+
+.search-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 24px 0;
+    margin-bottom: 16px;
+}
+
+.search-input {
+    flex: 1;
+}
+
+.close-btn {
+    margin-left: auto;
+}
+
+.search-content {
+    padding: 0 24px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.search-results {
+    height: 100%;
+    overflow-y: auto;
+}
+
+.search-results::-webkit-scrollbar {
+    width: 6px;
+}
+
+.search-results::-webkit-scrollbar-track {
+    background: var(--mdui-color-surface-container);
+}
+
+.search-results::-webkit-scrollbar-thumb {
+    background: var(--mdui-color-outline-variant);
+    border-radius: 3px;
+}
+
+.search-placeholder {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--mdui-color-on-surface-variant);
+}
+
+.search-placeholder mdui-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.search-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-top: 1px solid var(--mdui-color-outline-variant);
+}
+
+.result-count {
+    font-size: 0.875rem;
+    color: var(--mdui-color-on-surface-variant);
+}
+
+.search-result-item {
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    border: 1px solid var(--mdui-color-outline-variant);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--mdui-color-surface);
+}
+
+.search-result-item:hover {
+    background: var(--mdui-color-surface-container-hover);
+    border-color: var(--mdui-color-primary);
+    transform: translateY(-2px);
+}
+
+.search-result-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: var(--mdui-color-on-surface);
+    margin-bottom: 8px;
+}
+
+.search-result-content {
+    color: var(--mdui-color-on-surface-variant);
+    font-size: 0.875rem;
+    line-height: 1.4;
+    margin-bottom: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.search-result-meta {
+    display: flex;
+    gap: 12px;
+    font-size: 0.75rem;
+    color: var(--mdui-color-on-surface-variant);
+}
+
+.search-highlight {
+    background: var(--mdui-color-primary-container);
+    color: var(--mdui-color-on-primary-container);
+    padding: 1px 4px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.no-results, .search-loading {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--mdui-color-on-surface-variant);
+}
+
+@media (max-width: 600px) {
+    .search-dialog {
+        --mdui-dialog-width: 95vw;
+        --mdui-dialog-height: 80vh;
+    }
+    
+    .search-header {
+        padding: 16px 16px 0;
+    }
+    
+    .search-content {
+        padding: 0 16px;
+    }
+    
+    .search-footer {
+        padding: 12px 16px;
+    }
+}
+</style>
+
+<script>
+class HexoSearch {
+    constructor() {
+        this.searchData = null;
+        this.dialog = document.getElementById('search-dialog');
+        this.init();
+    }
+
+    async init() {
+        this.bindEvents();
+        this.preloadSearchData();
+    }
+
+    async preloadSearchData() {
+        try {
+            const response = await fetch('/search.json');
+            this.searchData = await response.json();
+        } catch (error) {
+            console.error('搜索数据加载失败:', error);
+        }
+    }
+
+    bindEvents() {
+        const searchToggle = document.getElementById('search-toggle');
+        const searchInput = document.getElementById('search-input');
+        const searchClose = document.getElementById('search-close');
+        const searchCloseBtn = document.getElementById('search-close-btn');
+
+        searchToggle.addEventListener('click', () => {
+            this.dialog.open = true;
+            setTimeout(() => searchInput.focus(), 100);
+        });
+
+        const closeDialog = () => {
+            this.dialog.open = false;
+            searchInput.value = '';
+            this.showPlaceholder();
+        };
+
+        searchClose.addEventListener('click', closeDialog);
+        searchCloseBtn.addEventListener('click', closeDialog);
+
+        searchInput.addEventListener('input', this.debounce((e) => {
+            this.performSearch(e.target.value);
+        }, 300));
+
+        // 键盘快捷键
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                searchToggle.click();
+            }
+        });
+    }
+
+    debounce(func, wait) {
+        let timeout;
+        return (...args) => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func(...args), wait);
+        };
+    }
+
+    performSearch(query) {
+        if (!query.trim()) {
+            this.showPlaceholder();
+            return;
+        }
+
+        if (!this.searchData) {
+            this.showError('搜索数据加载中...');
+            return;
+        }
+
+        const results = this.searchPosts(query);
+        this.displayResults(results, query);
+    }
+
+    searchPosts(query) {
+        const keywords = query.toLowerCase().split(' ').filter(k => k);
+        const allItems = [...(this.searchData.posts || []), ...(this.searchData.pages || [])];
         
+        return allItems
+            .map(item => {
+                let score = 0;
+                const title = item.title || '';
+                const content = item.content || '';
+
+                keywords.forEach(keyword => {
+                    if (title.toLowerCase().includes(keyword)) score += 10;
+                    if (content.toLowerCase().includes(keyword)) score += 2;
+                    if (item.tags?.some(tag => tag.toLowerCase().includes(keyword))) score += 5;
+                    if (item.categories?.some(cat => cat.toLowerCase().includes(keyword))) score += 3;
+                });
+
+                return { ...item, score };
+            })
+            .filter(item => item.score > 0)
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 20);
+    }
+
+    displayResults(results, query) {
+        const container = document.getElementById('search-results');
+        const countElement = document.getElementById('result-count');
+        
+        if (results.length === 0) {
+            container.innerHTML = `
+                <div class="no-results">
+                    <mdui-icon name="search_off" style="font-size: 48px; margin-bottom: 16px;"></mdui-icon>
+                    <div>没有找到包含 "${this.escapeHtml(query)}" 的内容</div>
+                </div>
+            `;
+            countElement.textContent = '';
+            return;
+        }
+
+        container.innerHTML = results.map(item => this.createResultItem(item, query)).join('');
+        countElement.textContent = `找到 ${results.length} 个结果`;
+        
+        container.querySelectorAll('.search-result-item').forEach((item, index) => {
+            item.addEventListener('click', () => {
+                window.location.href = results[index].url;
+                this.dialog.open = false;
+            });
+        });
+    }
+
+    createResultItem(item, query) {
+        const title = item.title || '无标题';
+        const content = item.content || '';
+        const highlightedTitle = this.highlightText(title, query);
+        const excerpt = this.createExcerpt(content, query);
+
+        return `
+            <div class="search-result-item">
+                <div class="search-result-title">
+                    <mdui-icon name="article" style="font-size: 16px;"></mdui-icon>
+                    ${highlightedTitle}
+                </div>
+                <div class="search-result-content">${excerpt}</div>
+                <div class="search-result-meta">
+                    ${item.date ? `<span>${item.date}</span>` : ''}
+                </div>
+            </div>
+        `;
+    }
+
+    highlightText(text, query) {
+        let highlighted = this.escapeHtml(text);
+        query.toLowerCase().split(' ').filter(k => k).forEach(keyword => {
+            const regex = new RegExp(`(${this.escapeRegex(keyword)})`, 'gi');
+            highlighted = highlighted.replace(regex, '<span class="search-highlight">$1</span>');
+        });
+        return highlighted;
+    }
+
+    createExcerpt(content, query) {
+        const keywords = query.toLowerCase().split(' ').filter(k => k);
+        let excerpt = this.escapeHtml(content.substring(0, 120));
+        
+        keywords.forEach(keyword => {
+            const regex = new RegExp(`(${this.escapeRegex(keyword)})`, 'gi');
+            excerpt = excerpt.replace(regex, '<span class="search-highlight">$1</span>');
+        });
+
+        return excerpt + (content.length > 120 ? '...' : '');
+    }
+
+    escapeRegex(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    escapeHtml(unsafe) {
+        return unsafe.replace(/[&<>"']/g, m => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+        }[m]));
+    }
+
+    showPlaceholder() {
+        document.getElementById('search-results').innerHTML = `
+            <div class="search-placeholder">
+                <mdui-icon name="search"></mdui-icon>
+                <div>输入关键词开始搜索</div>
+            </div>
+        `;
+        document.getElementById('result-count').textContent = '';
+    }
+
+    showError(message) {
+        document.getElementById('search-results').innerHTML = `
+            <div class="no-results">${message}</div>
+        `;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => new HexoSearch());
+</script>
+        <!-- 动态配色选择器组件 -->
+<mdui-button-icon id="color-picker-trigger" class="color-picker-icon">
+  <mdui-icon name="palette"></mdui-icon>
+  <mdui-tooltip content="动态配色"></mdui-tooltip>
+</mdui-button-icon>
+
+<mdui-dialog id="color-picker-dialog" class="dynamic-color-dialog" close-on-overlay-click>
+  <div class="mdui-dialog-title">动态配色设置</div>
+  <div class="mdui-dialog-content">
+    
+    <!-- 颜色选择 -->
+    <div class="color-section">
+      <h4>选择颜色</h4>
+      <div class="color-picker-container">
+        <input type="color" id="native-color-picker" class="native-color-picker" value="#6750a4">
+        <mdui-button id="random-color-btn" variant="tonal">随机颜色</mdui-button>
       </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
       
-      &copy; 2026 John Doe<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+      <!-- 颜色预览 -->
+      <div class="color-preview">
+        <div class="preview-label">预览:</div>
+        <div id="color-preview" class="preview-sample"></div>
+      </div>
     </div>
-  </div>
-</footer>
 
+    <mdui-divider></mdui-divider>
+
+    <!-- 操作按钮 -->
+    <div class="color-section">
+      <div class="action-buttons">
+        <mdui-button id="reset-color-btn" variant="tonal">重置</mdui-button>
+      </div>
     </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
+
+  </div>
+  <div class="mdui-dialog-actions">
+    <mdui-button id="cancel-color-btn">取消</mdui-button>
+    <mdui-button variant="filled" id="apply-color-btn">应用</mdui-button>
+  </div>
+</mdui-dialog>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // 获取DOM元素
+  const colorPickerTrigger = document.getElementById('color-picker-trigger');
+  const colorDialog = document.getElementById('color-picker-dialog');
+  const cancelBtn = document.getElementById('cancel-color-btn');
+  const applyBtn = document.getElementById('apply-color-btn');
+  const nativeColorPicker = document.getElementById('native-color-picker');
+  const resetBtn = document.getElementById('reset-color-btn');
+  const randomBtn = document.getElementById('random-color-btn');
+  const colorPreview = document.getElementById('color-preview');
+
+  let selectedColor = nativeColorPicker.value;
+
+  // 本地存储键名
+  const COLOR_SCHEME_KEY = 'materialis-color-scheme';
+
+  // 页面加载时恢复保存的颜色主题
+  function loadSavedColorScheme() {
+    try {
+      const savedColor = localStorage.getItem(COLOR_SCHEME_KEY);
+      if (savedColor && isValidColor(savedColor)) {
+        applyColorScheme(savedColor);
+        nativeColorPicker.value = savedColor;
+        updateColorPreview(savedColor);
+        selectedColor = savedColor;
+      }
+    } catch (e) {
+      console.warn('无法从本地存储加载颜色主题:', e);
+    }
+  }
+
+  // 保存颜色主题到本地存储
+  function saveColorScheme(color) {
+    try {
+      if (color && isValidColor(color)) {
+        localStorage.setItem(COLOR_SCHEME_KEY, color);
+      } else {
+        localStorage.removeItem(COLOR_SCHEME_KEY);
+      }
+    } catch (e) {
+      console.warn('无法保存颜色主题到本地存储:', e);
+    }
+  }
+
+  // 应用颜色主题
+  function applyColorScheme(color) {
+    if (typeof mdui !== 'undefined' && mdui.setColorScheme) {
+      mdui.setColorScheme(color);
+    } else {
+      console.error('MDUI setColorScheme 函数未找到');
+    }
+  }
+
+  // 移除颜色主题
+  function removeColorScheme() {
+    if (typeof mdui !== 'undefined' && mdui.removeColorScheme) {
+      mdui.removeColorScheme();
+    }
+  }
+
+  // 打开对话框
+  colorPickerTrigger.addEventListener('click', function() {
+    colorDialog.open = true;
+  });
+
+  // 关闭对话框
+  cancelBtn.addEventListener('click', function() {
+    colorDialog.open = false;
+    resetSelection();
+  });
+
+  // 原生颜色选择器事件
+  nativeColorPicker.addEventListener('input', function() {
+    selectedColor = this.value;
+    updateColorPreview(selectedColor);
+  });
+
+  // 应用配色
+  applyBtn.addEventListener('click', function() {
+    if (selectedColor && isValidColor(selectedColor)) {
+      // 应用并保存配色方案
+      applyColorScheme(selectedColor);
+      saveColorScheme(selectedColor);
+      
+      // 显示成功提示
+      mdui.snackbar({
+        message: '配色已应用',
+        placement: 'bottom',
+        timeout: 2000
+      });
+      
+      colorDialog.open = false;
+      resetSelection();
+    } else {
+      mdui.snackbar({
+        message: '请输入有效的颜色值',
+        placement: 'bottom',
+        timeout: 2000
+      });
+    }
+  });
+
+  // 重置配色
+  resetBtn.addEventListener('click', function() {
+    removeColorScheme();
+    saveColorScheme(null);
     
+    mdui.snackbar({
+      message: '配色已重置',
+      placement: 'bottom',
+      timeout: 2000
+    });
+    
+    resetSelection();
+  });
 
+  // 随机颜色
+  randomBtn.addEventListener('click', function() {
+    const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+    selectedColor = randomColor;
+    nativeColorPicker.value = randomColor;
+    updateColorPreview(randomColor);
+  });
 
-<script src="/js/jquery-3.6.4.min.js"></script>
+  // 辅助函数：验证颜色值
+  function isValidColor(color) {
+    return /^#([A-Fa-f0-9]{6})$/.test(color);
+  }
 
+  // 更新颜色预览
+  function updateColorPreview(color) {
+    if (colorPreview && isValidColor(color)) {
+      colorPreview.style.backgroundColor = color;
+    }
+  }
 
-
+  // 重置选择状态
+  function resetSelection() {
+    selectedColor = nativeColorPicker.value;
+    updateColorPreview(selectedColor);
+  }
   
-<script src="/fancybox/jquery.fancybox.min.js"></script>
+  // 页面加载时恢复保存的主题
+  loadSavedColorScheme();
+});
+</script>
+
+<style>
+.dynamic-color-dialog::part(overlay) {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.dynamic-color-dialog {
+    --mdui-dialog-width: 400px;
+    --mdui-dialog-max-height: 90vh;
+}
+
+.mdui-dialog-title {
+    text-align: center;
+    padding: 20px 20px 0;
+    font-weight: 500;
+    color: var(--mdui-color-on-surface);
+    font-size: 1.1rem;
+}
+
+.mdui-dialog-content {
+    padding: 16px 20px;
+}
+
+.mdui-dialog-actions {
+    padding: 12px 20px 20px;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.color-section {
+    margin-bottom: 16px;
+}
+
+.color-section:last-child {
+    margin-bottom: 0;
+}
+
+.color-section h4 {
+    margin: 0 0 12px 0;
+    color: var(--mdui-color-on-surface);
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.color-picker-container {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.native-color-picker {
+    width: 60px;
+    height: 40px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background-color: var(--mdui-color-surface-container);
+}
+
+.native-color-picker::-webkit-color-swatch {
+    border: 1px solid var(--mdui-color-outline-variant);
+    border-radius: 6px;
+}
+
+.native-color-picker::-moz-color-swatch {
+    border: 1px solid var(--mdui-color-outline-variant);
+    border-radius: 6px;
+}
+
+.color-preview {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.preview-label {
+    color: var(--mdui-color-on-surface-variant);
+    font-size: 0.85rem;
+}
+
+.preview-sample {
+    width: 60px;
+    height: 30px;
+    border-radius: 4px;
+    border: 1px solid var(--mdui-color-outline-variant);
+    background-color: transparent;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.color-picker-icon {
+    margin: 0 4px;
+    color: var(--mdui-color-on-surface-variant);
+    transition: all 0.2s ease;
+}
+
+.color-picker-icon:hover {
+    color: var(--mdui-color-primary);
+}
+
+/* 响应式设计 */
+@media (max-width: 600px) {
+    .dynamic-color-dialog {
+        --mdui-dialog-width: 90vw;
+    }
+    
+    .mdui-dialog-content {
+        padding: 12px 16px;
+    }
+    
+    .mdui-dialog-actions {
+        padding: 12px 16px 16px;
+    }
+}
+
+.mdui-dialog-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.mdui-dialog-content::-webkit-scrollbar-track {
+    background: var(--mdui-color-surface-container);
+}
+
+.mdui-dialog-content::-webkit-scrollbar-thumb {
+    background: var(--mdui-color-outline-variant);
+    border-radius: 3px;
+}
+</style>
+        
+
+</mdui-top-app-bar>
+    <mdui-navigation-drawer class="sidebar-content" close-on-overlay-click no-animation>
+    <!-- 用户信息卡片 -->
+    
+    <div class="sidebar-user-card">
+        
+            <mdui-avatar class="sidebar-user-avatar" src="https://blog.yizhixiaozhu.top/images/1.png"></mdui-avatar>
+        
+        
+            <div class="sidebar-user-name">system:error</div>
+        
+        
+            <div class="sidebar-user-slogen">长风破浪会有时，直挂云帆济沧海。</div>
+        
+        </div>
+    
+    
+    <!-- 导航菜单 -->
+    <mdui-list class="nav-list">
+        
+            
+                <mdui-list-item 
+                    class="nav-item"
+                    href="/"
+                    rounded
+                    
+                    active
+                    
+                >
+                    <mdui-icon slot="icon" name="home"></mdui-icon>
+                    首页
+                </mdui-list-item>
+            
+                <mdui-list-item 
+                    class="nav-item"
+                    href="/diary/"
+                    rounded
+                    
+                    variant="filled"
+                    
+                >
+                    <mdui-icon slot="icon" name="article"></mdui-icon>
+                    文章归档
+                </mdui-list-item>
+            
+                <mdui-list-item 
+                    class="nav-item"
+                    href="/categories/"
+                    rounded
+                    
+                    variant="filled"
+                    
+                >
+                    <mdui-icon slot="icon" name="category"></mdui-icon>
+                    分类
+                </mdui-list-item>
+            
+                <mdui-list-item 
+                    class="nav-item"
+                    href="/tags/"
+                    rounded
+                    
+                    variant="filled"
+                    
+                >
+                    <mdui-icon slot="icon" name="tag"></mdui-icon>
+                    标签
+                </mdui-list-item>
+            
+                <mdui-list-item 
+                    class="nav-item"
+                    href="/about/"
+                    rounded
+                    
+                    variant="filled"
+                    
+                >
+                    <mdui-icon slot="icon" name="person"></mdui-icon>
+                    关于
+                </mdui-list-item>
+            
+                <mdui-list-item 
+                    class="nav-item"
+                    href="/links/"
+                    rounded
+                    
+                    variant="filled"
+                    
+                >
+                    <mdui-icon slot="icon" name="link"></mdui-icon>
+                    友链
+                </mdui-list-item>
+            
+                <mdui-list-item 
+                    class="nav-item"
+                    href="/shuoshuo/"
+                    rounded
+                    
+                    variant="filled"
+                    
+                >
+                    <mdui-icon slot="icon" name="chat"></mdui-icon>
+                    说说
+                </mdui-list-item>
+            
+        
+    </mdui-list>
 
 
 
+</mdui-navigation-drawer>
+    <main class="main">
+        <div class="page-transition-container">
+            <div class="banner-wrapper">
+    <link rel="stylesheet" href="/fonts/banner/banner.css">
 
-<script src="/js/script.js"></script>
+<div class="banner-container">
+    <mdui-card class="banner-title">
+        <div class="banner-title-text1">Materialis</div>
+        <div class="banner-title-text2">A Material Design 3 theme for Hexo.</div>
+
+        
+    </mdui-card>
+
+    <mdui-card class="banner-image">
+        <div style="margin: 16px; text-align: center;">
+            <p class="banner-hitokoto" variant="filled">
+                <mdui-icon slot="icon">format_quote</mdui-icon>
+                <a href="#" id="hitokoto_text" style="color: var(--mdui-color-on-surface); text-decoration: none; font-style: italic;">
+                    <span id="hitokoto_inner">获取中...</span><span id="hitokoto_cursor">|</span>
+                </a>
+            </p>
+        </div>
+
+        <script>
+        (function(){
+            function typeText(el, text, speed, cursorEl) {
+                if (!el) return;
+                el.textContent = '';
+                let i = 0;
+                if (cursorEl) cursorEl.style.opacity = '1';
+                function step(){
+                    if (i < text.length) {
+                        el.textContent += text.charAt(i);
+                        i++;
+                        setTimeout(step, speed);
+                    } else {
+                        if (cursorEl) cursorEl.style.opacity = '0';
+                    }
+                }
+                step();
+            }
+
+            function fetchHitokoto(){
+                fetch('https://v1.hitokoto.cn')
+                    .then(function(r){ return r.json(); })
+                    .then(function(data){
+                        var inner = document.getElementById('hitokoto_inner');
+                        var cursor = document.getElementById('hitokoto_cursor');
+                        var link = document.getElementById('hitokoto_text');
+                        if (!inner || !link) return;
+                        if (data && data.hitokoto) {
+                            var text = data.hitokoto + (data.from ? ' — ' + data.from : '');
+                            if (data.uuid) link.href = 'https://hitokoto.cn/?uuid=' + data.uuid;
+                            typeText(inner, text, 40, cursor);
+                        }
+                    })
+                    .catch(function(){ /* ignore errors */ });
+            }
+
+            // 添加简单的光标闪烁样式
+            var _s = document.createElement('style');
+            _s.textContent = '#hitokoto_cursor{display:inline-block;margin-left:6px;opacity:1;transition:opacity .2s}@keyframes _hk{0%{opacity:1}50%{opacity:0}100%{opacity:1}} #hitokoto_cursor{animation:_hk 1s steps(1) infinite}';
+            document.head.appendChild(_s);
+
+            if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                fetchHitokoto();
+            } else {
+                document.addEventListener('DOMContentLoaded', fetchHitokoto);
+            }
+        })();
+        </script>
+    </mdui-card>
+</div>
+</div>
+<mdui-layout-main>
+    <div class="articles-container">
+        
+        
+        
+            
+                <mdui-card 
+    class="article-card" 
+    variant="filled"
+    onclick="location.href='/2026/04/22/hello-world/'">
+    
+    <div class="article-content">
+        <!-- 封面图片 -->
+        
+        
+        <!-- 内容区域 -->
+        <div class="article-main">
+            <mdui-typography class="article-title">
+                Hello World
+            </mdui-typography>
+
+            <!-- 有封面时摘要限制20字 -->
+            
+                <span>Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
+Qu...</span>
+            
+            
+            <div class="article-meta">
+                <mdui-typography variant="body2" class="article-date">
+                    <mdui-icon name="calendar_today" style="font-size: 1.1rem;"></mdui-icon>
+                    2026-04-22
+                </mdui-typography>
+                
+                <div class="article-tags">
+                    
+                </div>
+            </div>
+        </div>
+        
+        <!-- 右侧：阅读更多 -->
+        <mdui-button class="article-side" variant="tonal">
+            <mdui-icon name="arrow_forward"></mdui-icon>
+        </mdui-button>
+    </div>
+</mdui-card>
+            
+        
+    </div>
+</mdui-layout-main>
+        </div>
+    </main>
+
+    <br>
+<mdui-divider></mdui-divider>
+<mdui-footer class="site-footer">
+  <div class="footer-content">
+    
+    <!-- 主要信息区域 -->
+    <div class="footer-main">
+      <!-- 版权信息 -->
+      <div class="copyright">
+        <mdui-chip variant="filled" class="footer-chip">
+          <mdui-icon name="copyright" slot="icon"></mdui-icon>
+          &copy; 2026 
+          <a href="/" class="site-link">Hexo</a>
+          
+            · 保留所有权利
+          
+        </mdui-chip>
+      </div>
+
+      <div class="theme">
+        <mdui-chip variant="filled" class="footer-chip">
+          <mdui-icon name="code" slot="icon"></mdui-icon>
+          <a target="_blank" rel="noopener" href="https://github.com/can1425/materialis" class="site-link">Materialis</a>
+        </mdui-chip>
+      </div>
+
+      <!-- 备案信息 -->
+      
+        <div class="beian-info">
+          
+            <mdui-chip 
+              variant="filled-tonal" 
+              class="footer-chip beian-chip"
+              href="https://beian.miit.gov.cn/" 
+              target="_blank"
+            >
+              <mdui-icon name="verified" slot="icon"></mdui-icon>
+              京ICP备12345678号
+            </mdui-chip>
+          
+          
+            <mdui-chip 
+              variant="filled-tonal" 
+              class="footer-chip beian-chip"
+              href="http://www.beian.gov.cn/" 
+              target="_blank"
+            >
+              <mdui-icon name="security" slot="icon"></mdui-icon>
+              京公网安备 12345678901234号
+            </mdui-chip>
+          
+        </div>
+      
 
 
 
-
+      <!-- 自定义徽章 -->
+      
+    </div>
 
   </div>
+</mdui-footer>
+
+<style>
+/* 强制底部布局 */
+.site-footer {
+  background: var(--mdui-color-surface);
+  border-top: 1px solid var(--mdui-color-outline-variant);
+  margin-top: auto !important;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+/* 主要信息区域 */
+.footer-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* Chip 通用样式 */
+.footer-chip {
+  --mdui-chip-height: 32px;
+  --mdui-chip-container-color: var(--mdui-color-surface-container);
+  --mdui-chip-outline-color: var(--mdui-color-outline-variant);
+  transition: all 0.3s ease;
+  font-family: var(--mdui-font-family);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.footer-chip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 版权信息 Chip */
+.copyright .footer-chip {
+  --mdui-chip-container-color: var(--mdui-color-primary-container);
+  --mdui-chip-label-text-color: var(--mdui-color-on-primary-container);
+}
+
+/* 备案信息 Chip */
+.beian-chip {
+  --mdui-chip-container-color: var(--mdui-color-secondary-container);
+  --mdui-chip-label-text-color: var(--mdui-color-on-secondary-container);
+}
+
+/* 主题信息 Chip */
+.theme-info .footer-chip {
+  --mdui-chip-outline-color: var(--mdui-color-primary);
+  --mdui-chip-label-text-color: var(--mdui-color-primary);
+}
+
+/* 链接样式 */
+.site-link {
+  color: inherit;
+  text-decoration: none;
+  font-weight: 500;
+  margin: 0 2px;
+  vertical-align: middle;
+}
+
+.site-link:hover {
+  text-decoration: underline;
+}
+
+.tech-link {
+  color: inherit;
+  text-decoration: none;
+  font-weight: 500;
+  margin: 0 2px;
+  vertical-align: middle;
+}
+
+.tech-link:hover {
+  text-decoration: underline;
+}
+
+/* 备案信息 */
+.beian-info {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 自定义徽章 */
+.custom-badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.custom-badge {
+  cursor: pointer;
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+  .footer-main {
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  .custom-badges {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer-content {
+    padding: 1rem;
+  }
+  
+  .footer-main {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+  }
+  
+  .custom-badges {
+    justify-content: center;
+  }
+  
+  .beian-info {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .footer-chip {
+    text-align: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-content {
+    padding: 0.75rem;
+  }
+  
+  .footer-chip {
+    --mdui-chip-height: 28px;
+    font-size: 0.875rem;
+  }
+  
+  .custom-badges,
+  .beian-info {
+    width: 100%;
+  }
+}
+</style>   
 </body>
+
+<script type="module" src="/js/main.js"></script>
+<script src="/js/widgets/appbar.js"></script>
+<script src="/js/widgets/sidebar.js"></script>
+<script src="/js/page-transition.js"></script>
+<script>        
+
+console.log(`
+███╗   ███╗ █████╗ ████████╗███████╗██████╗ ██╗ █████╗ ██╗     ██╗███████╗
+████╗ ████║██╔══██╗╚══██╔══╝██╔════╝██╔══██╗██║██╔══██╗██║     ██║██╔════╝
+██╔████╔██║███████║   ██║   █████╗  ██████╔╝██║███████║██║     ██║███████╗
+██║╚██╔╝██║██╔══██║   ██║   ██╔══╝  ██╔══██╗██║██╔══██║██║     ██║╚════██║
+██║ ╚═╝ ██║██║  ██║   ██║   ███████╗██║  ██║██║██║  ██║███████╗██║███████║
+╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═╝╚══════╝╚═╝╚══════╝
+`);
+</script>
+
+<!-- 引入自定义 CSS -->
+
+
+<!-- 自定义头部代码 -->
+
+<!-- 引入自定义 JS -->
+
+
+<!-- 自定义底部代码 -->
+
+
+<!-- 纪念日黑白效果 -->
+
+<script>
+(function() {
+    // 获取今天的日期（月-日格式）
+    const today = new Date();
+    const month = today.getMonth() + 1; // 月份从0开始，需要+1
+    const day = today.getDate();
+    const todayStr = month + '.' + day;
+    
+    // 获取配置的纪念日列表
+    const memorialDays = JSON.parse('[7.7,9.18,12.13]');
+    
+    // 检查今天是否为纪念日
+    if (memorialDays.includes(todayStr)) {
+        // 应用黑白效果
+        const style = document.createElement('style');
+        style.innerHTML = `
+            html {
+                filter: grayscale(100%);
+                -webkit-filter: grayscale(100%);
+                -moz-filter: grayscale(100%);
+                -ms-filter: grayscale(100%);
+                -o-filter: grayscale(100%);
+            }
+        `;
+        document.head.appendChild(style);
+    }
+})();
+</script>
+
 </html>
