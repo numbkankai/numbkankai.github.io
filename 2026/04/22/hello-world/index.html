@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <mdui-icon name="menu"></mdui-icon>
     </mdui-button-icon>
     <mdui-top-app-bar-title onclick="window.location.href='/'" style="cursor: pointer;">
-        Hexo
+        numb
     </mdui-top-app-bar-title>
         <mdui-dropdown>
             <div slot="trigger">
@@ -1309,13 +1309,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     <div class="sidebar-user-card">
         
-            <mdui-avatar class="sidebar-user-avatar" src="https://blog.yizhixiaozhu.top/images/1.png"></mdui-avatar>
+            <mdui-avatar class="sidebar-user-avatar" src="https://numbkankai.git.io/images/1.png"></mdui-avatar>
         
         
-            <div class="sidebar-user-name">system:error</div>
+            <div class="sidebar-user-name">numb</div>
         
         
-            <div class="sidebar-user-slogen">长风破浪会有时，直挂云帆济沧海。</div>
+            <div class="sidebar-user-slogen">所有人都显得很寂寞，用自己的方式想尽办法排遣寂寞，事实上仍是延续自己的寂寞。寂寞是造化对群居者的诅咒，孤独才是寂寞的唯一出口。。</div>
         
         </div>
     
@@ -1867,65 +1867,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
     </mdui-card>
 
-    <mdui-card class="banner-image">
-        <div style="margin: 16px; text-align: center;">
-            <p class="banner-hitokoto" variant="filled">
-                <mdui-icon slot="icon">format_quote</mdui-icon>
-                <a href="#" id="hitokoto_text" style="color: var(--mdui-color-on-surface); text-decoration: none; font-style: italic;">
-                    <span id="hitokoto_inner">获取中...</span><span id="hitokoto_cursor">|</span>
-                </a>
-            </p>
-        </div>
-
-        <script>
-        (function(){
-            function typeText(el, text, speed, cursorEl) {
-                if (!el) return;
-                el.textContent = '';
-                let i = 0;
-                if (cursorEl) cursorEl.style.opacity = '1';
-                function step(){
-                    if (i < text.length) {
-                        el.textContent += text.charAt(i);
-                        i++;
-                        setTimeout(step, speed);
-                    } else {
-                        if (cursorEl) cursorEl.style.opacity = '0';
-                    }
-                }
-                step();
-            }
-
-            function fetchHitokoto(){
-                fetch('https://v1.hitokoto.cn')
-                    .then(function(r){ return r.json(); })
-                    .then(function(data){
-                        var inner = document.getElementById('hitokoto_inner');
-                        var cursor = document.getElementById('hitokoto_cursor');
-                        var link = document.getElementById('hitokoto_text');
-                        if (!inner || !link) return;
-                        if (data && data.hitokoto) {
-                            var text = data.hitokoto + (data.from ? ' — ' + data.from : '');
-                            if (data.uuid) link.href = 'https://hitokoto.cn/?uuid=' + data.uuid;
-                            typeText(inner, text, 40, cursor);
-                        }
-                    })
-                    .catch(function(){ /* ignore errors */ });
-            }
-
-            // 添加简单的光标闪烁样式
-            var _s = document.createElement('style');
-            _s.textContent = '#hitokoto_cursor{display:inline-block;margin-left:6px;opacity:1;transition:opacity .2s}@keyframes _hk{0%{opacity:1}50%{opacity:0}100%{opacity:1}} #hitokoto_cursor{animation:_hk 1s steps(1) infinite}';
-            document.head.appendChild(_s);
-
-            if (document.readyState === 'complete' || document.readyState === 'interactive') {
-                fetchHitokoto();
-            } else {
-                document.addEventListener('DOMContentLoaded', fetchHitokoto);
-            }
-        })();
-        </script>
-    </mdui-card>
+	
 </div>
 
     <div class="post-container">
@@ -2186,7 +2128,7 @@ twikoo.init({
         <mdui-chip variant="filled" class="footer-chip">
           <mdui-icon name="copyright" slot="icon"></mdui-icon>
           &copy; 2026 
-          <a href="/" class="site-link">Hexo</a>
+          <a href="/" class="site-link">numb</a>
           
             · 保留所有权利
           
@@ -2204,26 +2146,6 @@ twikoo.init({
       
         <div class="beian-info">
           
-            <mdui-chip 
-              variant="filled-tonal" 
-              class="footer-chip beian-chip"
-              href="https://beian.miit.gov.cn/" 
-              target="_blank"
-            >
-              <mdui-icon name="verified" slot="icon"></mdui-icon>
-              京ICP备12345678号
-            </mdui-chip>
-          
-          
-            <mdui-chip 
-              variant="filled-tonal" 
-              class="footer-chip beian-chip"
-              href="http://www.beian.gov.cn/" 
-              target="_blank"
-            >
-              <mdui-icon name="security" slot="icon"></mdui-icon>
-              京公网安备 12345678901234号
-            </mdui-chip>
           
         </div>
       
@@ -2429,34 +2351,5 @@ console.log(`
 
 
 <!-- 纪念日黑白效果 -->
-
-<script>
-(function() {
-    // 获取今天的日期（月-日格式）
-    const today = new Date();
-    const month = today.getMonth() + 1; // 月份从0开始，需要+1
-    const day = today.getDate();
-    const todayStr = month + '.' + day;
-    
-    // 获取配置的纪念日列表
-    const memorialDays = JSON.parse('[7.7,9.18,12.13]');
-    
-    // 检查今天是否为纪念日
-    if (memorialDays.includes(todayStr)) {
-        // 应用黑白效果
-        const style = document.createElement('style');
-        style.innerHTML = `
-            html {
-                filter: grayscale(100%);
-                -webkit-filter: grayscale(100%);
-                -moz-filter: grayscale(100%);
-                -ms-filter: grayscale(100%);
-                -o-filter: grayscale(100%);
-            }
-        `;
-        document.head.appendChild(style);
-    }
-})();
-</script>
 
 </html>

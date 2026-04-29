@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <mdui-icon name="menu"></mdui-icon>
     </mdui-button-icon>
     <mdui-top-app-bar-title onclick="window.location.href='/'" style="cursor: pointer;">
-        Hexo
+        numb
     </mdui-top-app-bar-title>
         <mdui-dropdown>
             <div slot="trigger">
@@ -914,13 +914,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     <div class="sidebar-user-card">
         
-            <mdui-avatar class="sidebar-user-avatar" src="https://blog.yizhixiaozhu.top/images/1.png"></mdui-avatar>
+            <mdui-avatar class="sidebar-user-avatar" src="https://numbkankai.git.io/images/1.png"></mdui-avatar>
         
         
-            <div class="sidebar-user-name">system:error</div>
+            <div class="sidebar-user-name">numb</div>
         
         
-            <div class="sidebar-user-slogen">长风破浪会有时，直挂云帆济沧海。</div>
+            <div class="sidebar-user-slogen">所有人都显得很寂寞，用自己的方式想尽办法排遣寂寞，事实上仍是延续自己的寂寞。寂寞是造化对群居者的诅咒，孤独才是寂寞的唯一出口。。</div>
         
         </div>
     
@@ -1061,7 +1061,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <mdui-chip variant="filled" class="footer-chip">
           <mdui-icon name="copyright" slot="icon"></mdui-icon>
           &copy; 2026 
-          <a href="/" class="site-link">Hexo</a>
+          <a href="/" class="site-link">numb</a>
           
             · 保留所有权利
           
@@ -1079,26 +1079,6 @@ document.addEventListener('DOMContentLoaded', function() {
       
         <div class="beian-info">
           
-            <mdui-chip 
-              variant="filled-tonal" 
-              class="footer-chip beian-chip"
-              href="https://beian.miit.gov.cn/" 
-              target="_blank"
-            >
-              <mdui-icon name="verified" slot="icon"></mdui-icon>
-              京ICP备12345678号
-            </mdui-chip>
-          
-          
-            <mdui-chip 
-              variant="filled-tonal" 
-              class="footer-chip beian-chip"
-              href="http://www.beian.gov.cn/" 
-              target="_blank"
-            >
-              <mdui-icon name="security" slot="icon"></mdui-icon>
-              京公网安备 12345678901234号
-            </mdui-chip>
           
         </div>
       
@@ -1304,34 +1284,5 @@ console.log(`
 
 
 <!-- 纪念日黑白效果 -->
-
-<script>
-(function() {
-    // 获取今天的日期（月-日格式）
-    const today = new Date();
-    const month = today.getMonth() + 1; // 月份从0开始，需要+1
-    const day = today.getDate();
-    const todayStr = month + '.' + day;
-    
-    // 获取配置的纪念日列表
-    const memorialDays = JSON.parse('[7.7,9.18,12.13]');
-    
-    // 检查今天是否为纪念日
-    if (memorialDays.includes(todayStr)) {
-        // 应用黑白效果
-        const style = document.createElement('style');
-        style.innerHTML = `
-            html {
-                filter: grayscale(100%);
-                -webkit-filter: grayscale(100%);
-                -moz-filter: grayscale(100%);
-                -ms-filter: grayscale(100%);
-                -o-filter: grayscale(100%);
-            }
-        `;
-        document.head.appendChild(style);
-    }
-})();
-</script>
 
 </html>
